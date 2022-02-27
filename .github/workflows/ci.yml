@@ -16,13 +16,13 @@ jobs:
 
       - name: Install mkp224o
         run: |
-          apt update && apt install -y libsodium-dev
+          sudo apt update && sudo apt install -y libsodium-dev
           git clone https://github.com/cathugger/mkp224o.git
           cd mkp224o/
           ./autogen.sh
           ./configure
           make
-          install mkp224o /usr/local/bin/mkp224o
+          sudo install mkp224o /usr/local/bin/mkp224o
 
       - name: Install pipenv
         uses: dschep/install-pipenv-action@v1
