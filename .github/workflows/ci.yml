@@ -16,7 +16,7 @@ jobs:
 
       - name: Install mkp224o
         run: |
-          git clone git@github.com:cathugger/mkp224o.git
+          git clone https://github.com/cathugger/mkp224o.git
           cd mkp224o/
           ./autogen.sh
           ./configure
