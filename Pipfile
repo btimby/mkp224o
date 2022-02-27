@@ -4,10 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-coverage = "*"
-pylint = "*"
 
 [dev-packages]
+coverage = "*"
+pylint = "*"
+coveralls = "*"
 
 [requires]
 python_version = "3"
