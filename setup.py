@@ -8,7 +8,7 @@ from setuptools import setup
 from setuptools import find_packages
 
 
-package_name = 'pywpas'
+package_name = 'mkpy224o'
 readme = os.path.join(os.path.dirname(__file__), 'README.rst')
 with open(readme) as readme_file:
     long_description = readme_file.read()
