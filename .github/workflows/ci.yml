@@ -16,6 +16,7 @@ jobs:
 
       - name: Install mkp224o
         run: |
+          apt update && apt install -y libsodium-dev
           git clone https://github.com/cathugger/mkp224o.git
           cd mkp224o/
           ./autogen.sh
