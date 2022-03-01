@@ -27,7 +27,7 @@ class Mkpy224oTestCase(TestCase):
         self.assertIn('secret', keys[0])
 
     def test_ten(self):
-        "Ensure it interval works"
+        "Ensure the interval works"
         m = mock.Mock()
         keys = find_keys('foo', 10, on_progress=m)
         self.assertFalse(m.called)

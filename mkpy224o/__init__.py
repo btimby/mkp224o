@@ -4,7 +4,6 @@ import os
 import time
 import threading
 from collections import defaultdict
-from queue import Queue, Empty
 from subprocess import Popen, PIPE, TimeoutExpired
 
 from .version import __version__
@@ -19,7 +18,7 @@ class _Mkpy224o:  # pylint: disable=too-few-public-methods
         self._total_calcs = pow(32, len(pattern))
         self._on_progress = on_progress
         self._stats_reports = 0
-        self._stats = defaultdict(lambda: 0)
+        self._stats = defaultdict(int)
         self._start = time.time()
 
     def _update_stats(self, stats):
@@ -64,10 +63,12 @@ class _Mkpy224o:  # pylint: disable=too-few-public-methods
 
         threading.Thread(target=_tail, daemon=True).start()
 
-    def __call__(self, count=1, interval=3):
+    def __call__(self, count=1, interval=None):
         cmd, keys = [
-            COMMAND, self._pattern, '-n', str(count), '-S', str(interval), '-y',
+            COMMAND, self._pattern, '-n', str(count), '-y',
         ], []
+        if interval is not None:
+            cmd.extend(['-S', str(interval)])
 
         with Popen(cmd, stdout=PIPE, stderr=PIPE, encoding='utf8') as proc:
             self._tail_stderr(proc.stderr)
