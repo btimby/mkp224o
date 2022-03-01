@@ -1,5 +1,6 @@
 "Python wrapper for mkp224o CLI tool."
 
+import os
 import time
 import threading
 from collections import defaultdict
@@ -9,7 +10,7 @@ from subprocess import Popen, PIPE, TimeoutExpired
 from .version import __version__
 
 
-COMMAND = 'mkp224o'
+COMMAND = os.getenv('MKP224O_PATH', 'mkp224o')
 
 
 class _Mkpy224o:  # pylint: disable=too-few-public-methods
@@ -40,20 +41,33 @@ class _Mkpy224o:  # pylint: disable=too-few-public-methods
 
     def _tail_stderr(self, stream):
         def _tail():
-            for line in iter(stream.readline, ''):
+            while True:
+                try:
+                    line = stream.readline()
+
+                except ValueError:
+                    break
+
+                if line == '':
+                    break
                 if not line.startswith('>'):
                     continue
+
                 line = line.strip().lstrip('>').rstrip('sec')
                 stats = {
-                    k: float(v) for k, v in [p.split(':') for p in line.split(', ')]
+                    k: float(v) for k, v in [
+                        p.split(':') for p in line.split(', ')
+                    ]
                 }
                 stats = self._update_stats(stats)
                 self._on_progress(stats)
+
         threading.Thread(target=_tail, daemon=True).start()
 
-    def __call__(self, count=1):
-        cmd = [COMMAND, self._pattern, '-n', str(count), '-S', '1', '-y']
-        keys = []
+    def __call__(self, count=1, interval=3):
+        cmd, keys = [
+            COMMAND, self._pattern, '-n', str(count), '-S', str(interval), '-y',
+        ], []
 
         with Popen(cmd, stdout=PIPE, stderr=PIPE, encoding='utf8') as proc:
             self._tail_stderr(proc.stderr)
@@ -85,8 +99,8 @@ class _Mkpy224o:  # pylint: disable=too-few-public-methods
         return keys
 
 
-def find_keys(pattern, count=1, on_progress=None):
+def find_keys(pattern, count=1, on_progress=None, interval=None):
     """
     Main interface for this module.
     """
-    return _Mkpy224o(pattern, on_progress=on_progress)(count)
+    return _Mkpy224o(pattern, on_progress=on_progress)(count, interval)

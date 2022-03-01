@@ -26,9 +26,16 @@ class Mkpy224oTestCase(TestCase):
         self.assertIn('public', keys[0])
         self.assertIn('secret', keys[0])
 
+    def test_ten(self):
+        "Ensure it interval works"
+        m = mock.Mock()
+        keys = find_keys('foo', 10, on_progress=m)
+        self.assertFalse(m.called)
+        self.assertEqual(len(keys), 10)
+
     def test_one_hundred(self):
         "Ensure it produces correct number of keys"
         m = mock.Mock()
-        keys = find_keys('foo', 100, on_progress=m)
+        keys = find_keys('foo', 100, on_progress=m, interval=1)
         self.assertTrue(m.called)
         self.assertEqual(len(keys), 100)
